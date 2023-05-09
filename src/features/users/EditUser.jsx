@@ -1,49 +1,38 @@
 import { useState } from "react";
 import Button from "../../components/Button";
 import TextField from "../../components/TextField";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { editUser } from "./userSlice";
+import AddEditUser from "../../components/AddEditUser";
 
 const EditUser = () => {
-  const params = useParams();
+  const { id } = useParams();
   const dispatch = useDispatch()
-  const users = useSelector((store) => store.users);
-  const existingUser = users.filter((user) => user.id === params.id);
-  const { name, email } = existingUser[0];
   const navigate = useNavigate();
-  const [values, setValues] = useState({
-    name,
-    email,
-  });
-  const handleEditUser = () => {
-    setValues({ name: "", email: "" });
-    dispatch(editUser({
-      id:params.id,
-      name:values.name,
-      email:values.email,
+  const users = useSelector((store) => store.users);
+  const existingUser = users.find((user) => user.id === id);
 
+  if ( ! existingUser )
+    return <Navigate to = '/' />
+
+  const { name, email } = existingUser
+  const [values, setValues] = useState({ name, email });
+  const handleEditUser = () => {
+    dispatch(editUser({
+      id,
+      name: values.name,
+      email: values.email,
     }))
     navigate("/");
   };
-  return (
-    <div className="mt-10 max-w-xl mx-auto">
-      <TextField
-        label="Name"
-        value={values.name}
-        onChange={(e) => setValues({ ...values, name: e.target.value })}
-        inputProps={{ type: "text", placeholder: "Jhon Doe" }}
-      />
-      <br />
-      <TextField
-        label="Email"
-        value={values.email}
-        onChange={(e) => setValues({ ...values, email: e.target.value })}
-        inputProps={{ type: "email", placeholder: "jhondoe@mail.com" }}
-      />
-      <Button onClick={handleEditUser}>Edit</Button>
-    </div>
-  );
+
+  return <AddEditUser
+    user={values}
+    setUser={setValues}
+    onSubmit={handleEditUser}
+    submitText='Edit'
+  />
 };
 
 export default EditUser;
