@@ -14,7 +14,7 @@ export default function AddEditUser({ user, setUser, onSubmit, submitText }) {
             label="Name"
             value={user.name}
             onChange={(e) => setUser({ ...user, name: e.target.value })}
-            inputProps={{ type: "text", placeholder: "Jhon Doe" }}
+            inputProps={{ type: "text", placeholder: "Jhon Doe", autoFocus: true }}
         />
         <br />
         <TextField
